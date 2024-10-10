@@ -1,0 +1,11 @@
+## This is the first iteration of the Backend built for the stem website. 
+
+fastapi==0.95.2
+uvicorn==0.22.0
+sqlalchemy==1.4.46
+pydantic==1.10.2
+passlib[bcrypt]==1.7.4
+python-jose==3.3.0
+email-validator==1.2.1
+alembic==1.7.7
+
