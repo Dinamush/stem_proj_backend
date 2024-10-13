@@ -1,0 +1,55 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual environments
+.env/
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Editor files
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Pytest
+.cache/
+.pytest_cache/
+
+# SQLite database files
+*.sqlite3
+*.db
+*.db-journal
+users.db  # Specific database file you are using
+
+# Logs
+*.log
+
+# Ignore specific files (optional)
+*.env  # Environment variables file
+.env.local
+.env.production
+
+# macOS files
+.DS_Store
+
+# Python eggs
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Migrations
+migrations/
+
+# Docker (if you're using Docker)
+docker-compose.override.yml

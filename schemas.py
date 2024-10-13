@@ -5,32 +5,25 @@ class UserCreate(BaseModel):
     first_name: str
     last_name: str
     birth_date: date
-    email: EmailStr
-    phone_number: str
+    email: EmailStr  # Changed to EmailStr for email validation
     password: str
-    competition: str
+    phone_number: str
+    competition: str  # Updated from bool to str to match the model
     agreed_to_rules: bool
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
 
 class UserResponse(BaseModel):
     id: int
     first_name: str
     last_name: str
-    email: EmailStr
-    phone_number: str
-    birth_date: date
-    competition: str
-    agreed_to_rules: bool
-    is_active: bool
+    email: str
 
     class Config:
         orm_mode = True
-        
-
-class UserLogin(BaseModel):
-    email: EmailStr
-    password: str
 
 class Token(BaseModel):
     access_token: str
     token_type: str
-
