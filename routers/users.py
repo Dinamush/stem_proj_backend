@@ -58,3 +58,26 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
     access_token = create_access_token(data={"sub": db_user.email}, expires_delta=access_token_expires)
     
     return {"access_token": access_token, "token_type": "bearer", "user_id": db_user.id, "email": db_user.email}
+
+#generate a list of all registered users
+@router.get("/retrieve", response_model=list[UserResponse])
+def get_all_users(db: Session = Depends(get_db)):
+    users = db.query(User).all()  # Query to retrieve all users
+    print(f"Retrieved users: {users}")
+    return users
+
+@router.get("/retrieve_debug", response_model=list[UserResponse])
+def get_all_users(db: Session = Depends(get_db)):
+    users = db.query(User).all()
+
+    # Convert each user object to a dictionary for readable output
+    users_dicts = [user.__dict__ for user in users]
+    
+    # Remove the '_sa_instance_state' which is an internal SQLAlchemy attribute
+    for user_dict in users_dicts:
+        user_dict.pop('_sa_instance_state', None)
+    
+    # Print the readable user data
+    print(f"Retrieved users: {users_dicts}")
+    
+    return users
