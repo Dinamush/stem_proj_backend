@@ -1,24 +1,36 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from routers import users, permissions
 from database import engine, Base
+import logging
 
+# Initialize FastAPI app
 app = FastAPI()
 
-# Register the routers
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Include routers
 app.include_router(users.router)
 app.include_router(permissions.router)
 
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to the user management system"}
+# Configure CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Replace with your frontend's domain in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-@app.get("/users/")
-def get_users():
-    return {"message": "Here are the users"}
+@app.get("/")
+async def read_root():
+    return {"message": "Welcome to the user management system"}
 
 # Ensure all tables are created at startup
 @app.on_event("startup")
-def startup():
-    print("Creating all tables...")
+async def startup_event():
+    logger.info("Creating all tables...")
     Base.metadata.create_all(bind=engine)
-    print("Tables created!")
+    logger.info("Tables created!")
