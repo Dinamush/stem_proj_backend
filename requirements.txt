@@ -7,4 +7,5 @@ bcrypt==4.0.1  # Pinned to prevent compatibility issues with passlib
 python-jose==3.3.0
 email-validator==1.2.1
 alembic==1.7.7
+gunicorn==20.1.0
 pydantic[email]
