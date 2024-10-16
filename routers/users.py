@@ -71,7 +71,9 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
         hashed_password=hashed_password,
         phone_number=user.phone_number,
         competition=user.competition,
-        agreed_to_rules=user.agreed_to_rules
+        agreed_to_rules=user.agreed_to_rules,
+        team_signup=user.team_signup,
+        team_members=user.team_members
     )
     db.add(db_user)
 

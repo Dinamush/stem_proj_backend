@@ -5,7 +5,8 @@ from sqlalchemy import (
     Boolean,
     Date,
     ForeignKey,
-    UniqueConstraint
+    UniqueConstraint,
+    JSON
 )
 from sqlalchemy.orm import relationship
 from base import Base
@@ -22,6 +23,8 @@ class User(Base):
     hashed_password = Column(String(255), nullable=False)
     competition = Column(String(255), nullable=True)  # Assuming this can be optional
     agreed_to_rules = Column(Boolean, default=False, nullable=False)
+    team_signup = Column(Boolean, default=False, nullable=False)
+    team_members = Column(JSON, nullable=True)
     is_active = Column(Boolean, default=True, nullable=False)
     is_superuser = Column(Boolean, default=False, nullable=False)
 

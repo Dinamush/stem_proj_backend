@@ -37,3 +37,6 @@ def create_superuser():
 
 if __name__ == "__main__":
     create_superuser()
+
+# Enter email for superuser: admin@keen360.com
+# Enter password for superuser: admin123

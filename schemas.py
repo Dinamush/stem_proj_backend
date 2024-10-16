@@ -11,6 +11,10 @@ class UserBase(BaseModel):
     phone_number: str = Field(..., example="1234567890")
     competition: Optional[str] = Field(None, example="Competition Name")
     agreed_to_rules: bool = Field(..., example=True)
+    team_signup: bool = Field(..., example=True)
+    team_members: Optional[List[str]] = Field(
+        None, example=["Alice Smith", "Bob Johnson", "Charlie Lee"]
+    )
 
 class UserCreate(UserBase):
     password: str = Field(..., min_length=8, example="strongpassword")
@@ -27,6 +31,8 @@ class UserResponse(BaseModel):
     phone_number: str
     competition: Optional[str]
     agreed_to_rules: bool
+    team_signup: bool
+    team_members: Optional[List[str]]
     is_active: bool
     is_superuser: bool
 
