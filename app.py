@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import users, permissions
+from routers import users, permissions, repositories
 from database import engine, Base
 import logging
 
@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 # Include routers
 app.include_router(users.router)
 app.include_router(permissions.router)
+app.include_router(repositories.router)
 
 # Configure CORS middleware
 app.add_middleware(

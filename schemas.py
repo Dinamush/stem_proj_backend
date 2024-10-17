@@ -1,5 +1,5 @@
-from pydantic import BaseModel, EmailStr, Field
-from datetime import date
+from pydantic import BaseModel, EmailStr, Field, HttpUrl
+from datetime import datetime, date
 from typing import Optional, List
 
 # User Schemas
@@ -15,6 +15,29 @@ class UserBase(BaseModel):
     team_members: Optional[List[str]] = Field(
         None, example=["Alice Smith", "Bob Johnson", "Charlie Lee"]
     )
+    
+# Repository Schemas
+class RepositoryBase(BaseModel):
+    repository_name: str = Field(..., example="my-awesome-repo")
+    repository_url: HttpUrl = Field(..., example="https://github.com/username/my-awesome-repo")
+    description: Optional[str] = Field(None, example="A description of the repository.")
+
+class RepositoryCreate(RepositoryBase):
+    pass
+
+class RepositoryUpdate(BaseModel):
+    repository_name: Optional[str] = Field(None, example="my-updated-repo")
+    repository_url: Optional[HttpUrl] = Field(None, example="https://github.com/username/my-updated-repo")
+    description: Optional[str] = Field(None, example="An updated description.")
+
+class RepositoryResponse(RepositoryBase):
+    id: int
+    user_id: int
+    created_at: date
+    updated_at: date
+
+    class Config:
+        orm_mode = True
 
 class UserCreate(UserBase):
     password: str = Field(..., min_length=8, example="strongpassword")
@@ -35,6 +58,7 @@ class UserResponse(BaseModel):
     team_members: Optional[List[str]]
     is_active: bool
     is_superuser: bool
+    repositories: List[RepositoryResponse] = []
 
     class Config:
         orm_mode = True

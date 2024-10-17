@@ -6,7 +6,9 @@ from sqlalchemy import (
     Date,
     ForeignKey,
     UniqueConstraint,
-    JSON
+    JSON,
+    Text,
+    DateTime
 )
 from sqlalchemy.orm import relationship
 from base import Base
@@ -33,6 +35,12 @@ class User(Base):
         back_populates="user",
         cascade="all, delete-orphan"
     )
+    
+    repositories = relationship(
+        'Repository',
+        back_populates='user',
+        cascade='all, delete-orphan'
+    )
 
 class Permission(Base):
     __tablename__ = 'permissions'
@@ -46,3 +54,20 @@ class Permission(Base):
     __table_args__ = (
         UniqueConstraint('user_id', 'competition_access', name='uq_user_competition_access'),
     )
+
+
+from datetime import datetime
+
+class Repository(Base):
+    __tablename__ = 'repositories'
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    repository_name = Column(String(255), nullable=False)
+    repository_url = Column(String(255), nullable=False)
+    description = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationship to the User model
+    user = relationship('User', back_populates='repositories')
