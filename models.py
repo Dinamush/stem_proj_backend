@@ -8,7 +8,8 @@ from sqlalchemy import (
     UniqueConstraint,
     JSON,
     Text,
-    DateTime
+    DateTime,
+    TypeDecorator,
 )
 from sqlalchemy.orm import relationship
 from base import Base
@@ -25,8 +26,9 @@ class User(Base):
     hashed_password = Column(String(255), nullable=False)
     competition = Column(String(255), nullable=True)  # Assuming this can be optional
     agreed_to_rules = Column(Boolean, default=False, nullable=False)
-    team_signup = Column(Boolean, default=False, nullable=False)
+    team_signup = Column(Boolean, default=False)
     team_members = Column(JSON, nullable=True)
+    team_member_emails = Column(JSON, nullable=True)
     is_active = Column(Boolean, default=True, nullable=False)
     is_superuser = Column(Boolean, default=False, nullable=False)
 
@@ -71,3 +73,16 @@ class Repository(Base):
 
     # Relationship to the User model
     user = relationship('User', back_populates='repositories')
+
+class JSONEncodedList(TypeDecorator):
+    impl = Text
+
+    def process_bind_param(self, value, dialect):
+        if value is not None:
+            value = json.dumps(value)
+        return value
+
+    def process_result_value(self, value, dialect):
+        if value is not None:
+            value = json.loads(value)
+        return value

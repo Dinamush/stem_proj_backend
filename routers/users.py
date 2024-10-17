@@ -11,10 +11,12 @@ from models import User
 from database import get_db
 from schemas import UserCreate, UserResponse, UserLogin, Token
 from datetime import timedelta
-from typing import List
+from typing import List, Optional
 from fastapi.security import OAuth2PasswordBearer
 import logging
 from jose import JWTError
+from pydantic import EmailStr
+
 
 router = APIRouter(
     prefix="/users",
@@ -73,7 +75,10 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
         competition=user.competition,
         agreed_to_rules=user.agreed_to_rules,
         team_signup=user.team_signup,
-        team_members=user.team_members
+        team_members=user.team_members,
+        team_member_emails=user.team_member_emails,
+        is_active=True,
+        is_superuser=False
     )
     db.add(db_user)
 

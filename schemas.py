@@ -15,6 +15,9 @@ class UserBase(BaseModel):
     team_members: Optional[List[str]] = Field(
         None, example=["Alice Smith", "Bob Johnson", "Charlie Lee"]
     )
+    team_member_emails: Optional[List[EmailStr]] = Field(
+        None, example=["alice@example.com", "bob@example.com", "charlie@example.com"]
+    )
     
 # Repository Schemas
 class RepositoryBase(BaseModel):
@@ -56,6 +59,7 @@ class UserResponse(BaseModel):
     agreed_to_rules: bool
     team_signup: bool
     team_members: Optional[List[str]]
+    team_member_emails: Optional[List[EmailStr]]
     is_active: bool
     is_superuser: bool
     repositories: List[RepositoryResponse] = []
