@@ -18,7 +18,7 @@ def create_superuser():
             birth_date=date(1990, 1, 1),
             email=email,
             hashed_password=hashed_password,
-            phone_number="1234567890",
+            phone_number="1234567870",
             competition="AdminCompetition",
             agreed_to_rules=True,
             is_active=True,
