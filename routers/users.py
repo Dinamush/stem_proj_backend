@@ -5,7 +5,8 @@ from auth import (
     get_password_hash,
     verify_password,
     create_access_token,
-    decode_access_token
+    decode_access_token,
+    get_current_user
 )
 from models import User
 from database import get_db
@@ -31,29 +32,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 # Dependency for OAuth2 authentication (updated to use `/token` instead of `/login`)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/token")
 
-
-def get_current_user(
-    token: str = Depends(oauth2_scheme),
-    db: Session = Depends(get_db)
-):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    try:
-        payload = decode_access_token(token)
-        email: str = payload.get("sub")
-        if email is None:
-            raise credentials_exception
-    except JWTError as e:
-        logger.error(f"JWTError: {e}")
-        raise credentials_exception
-
-    user = db.query(User).filter(User.email == email).first()
-    if user is None:
-        raise credentials_exception
-    return user
 
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
