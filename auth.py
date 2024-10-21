@@ -20,8 +20,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 # OAuth2 scheme
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
 
-
-
 def get_password_hash(password: str) -> str:
     """Hash a plaintext password."""
     return pwd_context.hash(password)
