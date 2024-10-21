@@ -16,7 +16,7 @@ from fastapi.security import OAuth2PasswordBearer
 import logging
 from jose import JWTError
 from pydantic import EmailStr
-
+from fastapi.security import OAuth2PasswordRequestForm
 
 router = APIRouter(
     prefix="/users",
@@ -28,8 +28,8 @@ logger = logging.getLogger(__name__)
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-# Dependency for OAuth2 authentication
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+# Dependency for OAuth2 authentication (updated to use `/token` instead of `/login`)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/token")
 
 
 def get_current_user(
@@ -49,6 +49,7 @@ def get_current_user(
     except JWTError as e:
         logger.error(f"JWTError: {e}")
         raise credentials_exception
+
     user = db.query(User).filter(User.email == email).first()
     if user is None:
         raise credentials_exception
@@ -104,20 +105,22 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
 
 
 @router.post("/login", response_model=Token)
-def login(user: UserLogin, db: Session = Depends(get_db)):
-    db_user = db.query(User).filter(User.email == user.email).first()
-    if not db_user or not verify_password(user.password, db_user.hashed_password):
+def login_for_access_token(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db)
+):
+    db_user = db.query(User).filter(User.email == form_data.username).first()
+    if not db_user or not verify_password(form_data.password, db_user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid email or password"
+            detail="Invalid email or password",
+            headers={"WWW-Authenticate": "Bearer"},
         )
-
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": db_user.email},
         expires_delta=access_token_expires
     )
-
     return {
         "access_token": access_token,
         "token_type": "bearer",
@@ -150,29 +153,3 @@ def get_all_users_debug(
 
     logger.debug(f"Retrieved users: {users_dicts}")
     return users
-
-from fastapi.security import OAuth2PasswordRequestForm
-
-@router.post("/token", response_model=Token)
-def login_for_access_token(
-    form_data: OAuth2PasswordRequestForm = Depends(),
-    db: Session = Depends(get_db)
-):
-    db_user = db.query(User).filter(User.email == form_data.username).first()
-    if not db_user or not verify_password(form_data.password, db_user.hashed_password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid email or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": db_user.email},
-        expires_delta=access_token_expires
-    )
-    return {
-        "access_token": access_token,
-        "token_type": "bearer",
-        "user_id": db_user.id,
-        "email": db_user.email
-    }

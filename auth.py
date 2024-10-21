@@ -17,9 +17,8 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "godhasasenseofhumour")  # Use environ
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-# OAuth2 scheme
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
-
+# OAuth2 scheme (updated to use /users/token instead of /users/login)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/token")
 
 
 def get_password_hash(password: str) -> str:
